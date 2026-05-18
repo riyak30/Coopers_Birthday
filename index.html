@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday Cooper!</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      cursor: none;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 20% 20%, rgba(168, 216, 255, 0.25), transparent 28%),
+                  radial-gradient(circle at 80% 15%, rgba(94, 149, 255, 0.18), transparent 20%),
+                  radial-gradient(circle at 50% 100%, rgba(46, 72, 182, 0.32), transparent 30%),
+                  linear-gradient(135deg, #072460, #1f4baf, #3d78ff);
+      background-size: cover;
+      color: #edf4ff;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .cursor {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      position: fixed;
+      pointer-events: none;
+      mix-blend-mode: difference;
+      transform: translate(-50%, -50%);
+      transition: transform 0.12s ease;
+      z-index: 10;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 720px;
+      padding: 40px 28px;
+      border-radius: 32px;
+      background: rgba(7, 27, 72, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(12px);
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 6vw, 4.4rem);
+      color: #c5e3ff;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 24px;
+      min-height: 4.4rem;
+      opacity: 0;
+    }
+
+    .greeting {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      color: #dbe9ff;
+      margin-bottom: 40px;
+      min-height: 3.5rem;
+      opacity: 0;
+    }
+
+    .envelope-button {
+      position: relative;
+      width: 280px;
+      height: 160px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      opacity: 0;
+    }
+
+    .envelope-shell {
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      background: linear-gradient(180deg, #bfd8ff 0%, #5d8fff 55%, #2f5fe0 100%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 18px 48px rgba(14, 49, 111, 0.35);
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .envelope-button:hover .envelope-shell {
+      transform: translateY(-3px);
+      box-shadow: 0 22px 54px rgba(14, 49, 111, 0.45);
+    }
+
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 62%;
+      background: linear-gradient(180deg, #7baffe 0%, #3c70f1 100%);
+      clip-path: polygon(0 0, 100% 0, 100% 52%, 50% 100%, 0 52%);
+      transform-origin: top center;
+      transition: transform 0.6s ease;
+      z-index: 1;
+    }
+
+    .envelope-button.open .envelope-flap {
+      transform: perspective(400px) translateY(-12px) rotateX(180deg);
+    }
+
+    .envelope-content {
+      position: absolute;
+      inset: 0;
+      padding: 24px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .envelope-text {
+      display: inline-block;
+      padding: 14px 22px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #f4f9ff;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+      backdrop-filter: blur(6px);
+    }
+
+    .envelope-button.open {
+      transform: scale(0.98);
+    }
+
+    .floating {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0;
+      font-size: 1.2rem;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 32px 20px;
+      }
+
+      h1 {
+        font-size: 2.6rem;
+      }
+
+      .greeting {
+        font-size: 1rem;
+      }
+
+      .envelope-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cursor"></div>
+  <div class="container">
+    <h1 class="typed-title"></h1>
+    <div class="greeting"></div>
+    <button class="envelope-button" aria-label="Open envelope">
+      <span class="envelope-shell">
+        <span class="envelope-flap"></span>
+        <span class="envelope-content">
+          <span class="envelope-text">Open me</span>
+        </span>
+      </span>
+    </button>
+  </div>
+
+  <script>
+    const cursor = document.querySelector('.cursor');
+    const titleElement = document.querySelector('.typed-title');
+    const greetingElement = document.querySelector('.greeting');
+    const envelopeButton = document.querySelector('.envelope-button');
+
+    const titleText = 'Happy Birthday Cooper!';
+    const greetingText = 'You are my soulmate and I am so lucky to have you in my life <3';
+    const floatingElements = ['✨', '💙', '🌟', '❄️', '💫'];
+
+    document.addEventListener('mousemove', (event) => {
+      cursor.style.left = event.clientX + 'px';
+      cursor.style.top = event.clientY + 'px';
+    });
+
+    function typeText(element, text, speed, callback) {
+      let index = 0;
+      element.textContent = '';
+      element.style.opacity = '1';
+
+      function typeChar() {
+        if (index < text.length) {
+          element.textContent += text.charAt(index);
+          index++;
+          setTimeout(typeChar, speed);
+        } else if (callback) {
+          callback();
+        }
+      }
+
+      typeChar();
+    }
+
+    function createFloating() {
+      const element = document.createElement('div');
+      element.className = 'floating';
+      element.textContent = floatingElements[Math.floor(Math.random() * floatingElements.length)];
+      element.style.left = Math.random() * 100 + 'vw';
+      element.style.top = Math.random() * 100 + 'vh';
+      element.style.fontSize = (Math.random() * 16 + 18) + 'px';
+      document.body.appendChild(element);
+
+      gsap.to(element, {
+        y: -180,
+        x: Math.random() * 120 - 60,
+        opacity: 1,
+        duration: Math.random() * 4 + 4,
+        ease: 'power1.out',
+        onComplete: () => element.remove()
+      });
+    }
+
+    window.addEventListener('load', () => {
+      gsap.to(titleElement, { opacity: 1, duration: 0.9, y: 5, ease: 'power3.out' });
+      gsap.to(greetingElement, { opacity: 1, duration: 0.9, delay: 0.8, y: 5, ease: 'power3.out' });
+      gsap.to(envelopeButton, { opacity: 1, duration: 0.9, delay: 1.8, y: -10, ease: 'back.out(1.7)' });
+      typeText(titleElement, titleText, 90, () => {
+        setTimeout(() => typeText(greetingElement, greetingText, 60), 360);
+      });
+      setInterval(createFloating, 900);
+    });
+
+    function playOpenSound() {
+      if (!window.AudioContext && !window.webkitAudioContext) return;
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const now = audioContext.currentTime;
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      oscillator.type = 'triangle';
+      oscillator.frequency.setValueAtTime(520, now);
+      oscillator.frequency.exponentialRampToValueAtTime(280, now + 0.2);
+      gain.gain.setValueAtTime(0.03, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+      oscillator.start(now);
+      oscillator.stop(now + 0.35);
+    }
+
+    envelopeButton.addEventListener('click', () => {
+      playOpenSound();
+      envelopeButton.classList.add('open');
+      gsap.to(envelopeButton, { scale: 0.95, duration: 0.15, yoyo: true, repeat: 1 });
+      setTimeout(() => { window.location.href = 'video.html'; }, 620);
+    });
+  </script>
+</body>
+</html>
