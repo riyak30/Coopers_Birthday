@@ -172,8 +172,8 @@
       <div class="video-wrapper">
         <iframe
           id="birthdayVideo"
-          src="https://youtu.be/T7_gP-Pi_hI?autoplay=1&mute=0&rel=0&modestbranding=1"
-          allow="autoplay; fullscreen"
+          src="https://www.youtube-nocookie.com/embed/T7_gP-Pi_hI?autoplay=1&mute=1&rel=0&modestbranding=1"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowfullscreen
         ></iframe>
       </div>
@@ -214,16 +214,6 @@
       }
     });
 
-    window.addEventListener('load', () => {
-      if (video) {
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(() => {
-            // Autoplay blocked; user can manually play the video.
-          });
-        }
-      }
-    });
   </script>
 </body>
 </html>
